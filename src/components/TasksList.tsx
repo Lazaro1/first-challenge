@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FlatList,
   Image,
@@ -9,6 +9,7 @@ import {
   FlatListProps,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import { ModalRemove } from "../components/Modal";
 
 import { ItemWrapper } from "./ItemWrapper";
 
@@ -31,6 +32,20 @@ export function TasksList({
   toggleTaskDone,
   removeTask,
 }: TasksListProps) {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  function openModal() {
+    setModalVisible(true);
+  }
+
+  function closeModal() {
+    setModalVisible(false);
+  }
+
+  function removeItem(id: number) {
+    removeTask(id);
+    closeModal();
+  }
   return (
     <FlatList
       data={tasks}
@@ -51,16 +66,11 @@ export function TasksList({
                 <View
                   testID={`marker-${index}`}
                   style={item.done ? styles.taskMarkerDone : styles.taskMarker}
-                  //TODO - use style prop
                 >
                   {item.done && <Icon name="check" size={12} color="#FFF" />}
                 </View>
 
-                <Text
-                  style={item.done ? styles.taskTextDone : styles.taskText}
-
-                  //TODO - use style prop
-                >
+                <Text style={item.done ? styles.taskTextDone : styles.taskText}>
                   {item.title}
                 </Text>
               </TouchableOpacity>
@@ -69,10 +79,36 @@ export function TasksList({
             <TouchableOpacity
               testID={`trash-${index}`}
               style={{ paddingHorizontal: 24 }}
-              onPress={() => removeTask(item.id)}
+              onPress={openModal}
+              // onPress={() => removeTask(item.id)}
             >
               <Image source={trashIcon} />
             </TouchableOpacity>
+
+            <ModalRemove visible={modalVisible}>
+              <View style={styles.containerModal}>
+                <Text style={styles.Title}>
+                  Tem certeza que você deseja remover esse item?
+                </Text>
+                <View style={styles.underline} />
+                <View style={styles.containerButton}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => removeItem(item.id)}
+                  >
+                    <Text style={styles.TextButton}>SIM</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: "#E4E4E4" }]}
+                    onPress={closeModal}
+                  >
+                    <Text style={[styles.TextButton, { color: "#7A7A7A" }]}>
+                      NÂO
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ModalRemove>
           </ItemWrapper>
         );
       }}
@@ -120,5 +156,41 @@ const styles = StyleSheet.create({
     color: "#1DB863",
     textDecorationLine: "line-through",
     fontFamily: "Inter-Medium",
+  },
+  containerModal: {
+    flex: 1,
+    padding: 25,
+    alignItems: "center",
+  },
+  containerButton: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  button: {
+    width: 150,
+    padding: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8257E5",
+    marginLeft: 14,
+    borderRadius: 15,
+  },
+  underline: {
+    width: 250,
+    height: 2,
+    margin: 10,
+    backgroundColor: "#8257E5",
+  },
+  TextButton: {
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  Title: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 15,
+    color: "#7A7A7A",
+    fontFamily: "Inter-Regular",
   },
 });

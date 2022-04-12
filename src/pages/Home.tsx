@@ -1,21 +1,36 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, TouchableOpacity, StyleSheet, Text, View } from "react-native";
 
 import { Header } from "../components/Header";
 import { Task, TasksList } from "../components/TasksList";
 import { TodoInput } from "../components/TodoInput";
 
 export function Home() {
+  const [modalVisible, setModalVisible] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
 
   function handleAddTask(newTaskTitle: string) {
-    const newTask = {
-      id: String(new Date().getTime()),
-      title: newTaskTitle,
-      done: false,
-    };
+    const verifyTask = tasks.find((task) => task.title === newTaskTitle);
 
-    setTasks((oldtask: any) => [...oldtask, newTask]);
+    if (verifyTask) {
+      Alert.alert("Tarefa Já adicionada");
+      return;
+    } else {
+      const newTask = {
+        id: String(new Date().getTime()),
+        title: newTaskTitle,
+        done: false,
+      };
+      setTasks((oldtask: any) => [...oldtask, newTask]);
+    }
+  }
+
+  function openModal() {
+    setModalVisible(true);
+  }
+
+  function closeModal() {
+    setModalVisible(false);
   }
 
   function handleToggleTaskDone(id: number) {

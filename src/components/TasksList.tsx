@@ -25,12 +25,14 @@ interface TasksListProps {
   tasks: Task[];
   toggleTaskDone: (id: number) => void;
   removeTask: (id: number) => void;
+  handleEditTask: (id: number) => void;
 }
 
 export function TasksList({
   tasks,
   toggleTaskDone,
   removeTask,
+  handleEditTask,
 }: TasksListProps) {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -61,7 +63,6 @@ export function TasksList({
                 activeOpacity={0.7}
                 style={styles.taskButton}
                 onPress={() => toggleTaskDone(item.id)}
-                //TODO - use onPress (toggle task) prop
               >
                 <View
                   testID={`marker-${index}`}

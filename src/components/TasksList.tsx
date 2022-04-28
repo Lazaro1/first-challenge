@@ -8,12 +8,12 @@ import {
   StyleSheet,
   FlatListProps,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import { ModalRemove } from "../components/Modal";
+import { EditTaskArgs } from "../pages/Home";
 
 import { ItemWrapper } from "./ItemWrapper";
-
-import trashIcon from "../assets/icons/trash/trash.png";
+import { TaskItem } from "./taskItem";
+import { TaskItem2 } from "./TaskItem2";
 
 export interface Task {
   id: number;
@@ -21,19 +21,20 @@ export interface Task {
   done: boolean;
 }
 
-interface TasksListProps {
+interface TasksProps {
   tasks: Task[];
   toggleTaskDone: (id: number) => void;
   removeTask: (id: number) => void;
   handleEditTask: (id: number) => void;
+  editTask: ({ taskId, taskNewTitle }: EditTaskArgs) => void;
 }
 
 export function TasksList({
   tasks,
   toggleTaskDone,
   removeTask,
-  handleEditTask,
-}: TasksListProps) {
+  editTask,
+}: TasksProps) {
   const [modalVisible, setModalVisible] = useState(false);
 
   function openModal() {
@@ -48,6 +49,7 @@ export function TasksList({
     removeTask(id);
     closeModal();
   }
+
   return (
     <FlatList
       data={tasks}
@@ -57,35 +59,12 @@ export function TasksList({
       renderItem={({ item, index }) => {
         return (
           <ItemWrapper index={index}>
-            <View>
-              <TouchableOpacity
-                testID={`button-${index}`}
-                activeOpacity={0.7}
-                style={styles.taskButton}
-                onPress={() => toggleTaskDone(item.id)}
-              >
-                <View
-                  testID={`marker-${index}`}
-                  style={item.done ? styles.taskMarkerDone : styles.taskMarker}
-                >
-                  {item.done && <Icon name="check" size={12} color="#FFF" />}
-                </View>
-
-                <Text style={item.done ? styles.taskTextDone : styles.taskText}>
-                  {item.title}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              testID={`trash-${index}`}
-              style={{ paddingHorizontal: 24 }}
-              onPress={openModal}
-              // onPress={() => removeTask(item.id)}
-            >
-              <Image source={trashIcon} />
-            </TouchableOpacity>
-
+            <TaskItem
+              task={item}
+              editTask={editTask}
+              toggleTaskDone={toggleTaskDone}
+              removeTask={removeTask}
+            />
             <ModalRemove visible={modalVisible}>
               <View style={styles.containerModal}>
                 <Text style={styles.Title}>

@@ -5,6 +5,11 @@ import { Header } from "../components/Header";
 import { Task, TasksList } from "../components/TasksList";
 import { TodoInput } from "../components/TodoInput";
 
+export type EditTaskArgs = {
+  taskId: number;
+  taskNewTitle: string;
+};
+
 export function Home() {
   const [modalVisible, setModalVisible] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -49,7 +54,7 @@ export function Home() {
     setTasks(newTaskArray);
   }
 
-  function handleEditTask(taskId: number, taskNewTitle: string) {
+  function handleEditTask({ taskId, taskNewTitle }: EditTaskArgs) {
     const update = tasks.map((task) => ({ ...task }));
     const searchItem = update.find((task) => task.id === taskId);
 
